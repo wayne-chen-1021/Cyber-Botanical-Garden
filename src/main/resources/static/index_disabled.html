@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MUD 勇者之旅</title>
+  <style>
+    body {
+      font-family: "Microsoft JhengHei", sans-serif;
+      background: linear-gradient(145deg, #1e1e2f, #2a2a40);
+      color: #ffffff;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #ffcc00;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    input[type="text"] {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      width: 250px;
+    }
+
+    .game-log {
+      background-color: #121221;
+      border: 1px solid #444;
+      border-radius: 10px;
+      padding: 1rem;
+      width: 100%;
+      max-width: 700px;
+      height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-family: monospace;
+      margin-bottom: 1.5rem;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+    }
+
+    button {
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      transition: background-color 0.3s;
+    }
+    button:disabled {
+      background-color: gray;
+      cursor: not-allowed;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>勇者之旅</h1>
+
+  <!-- 玩家名稱輸入與啟動遊戲 -->
+  <div class="input-group">
+    <input type="text" id="name-input" placeholder="勇者── 您的名字是...?" />
+    <button id="start-game">開始遊戲</button>
+  </div>
+
+  <!-- 顯示遊戲文字內容 -->
+  <div class="game-log" id="game-log">
+【系統遊戲提示】請輸入勇者名稱或是讀取存檔以開始...
+  </div>
+
+  <!-- 命令輸入框 -->
+  <div class="input-group">
+    <input type="text" id="command-input" placeholder="按下【指令幫助】可查看可用指令" disabled />
+    <button id="send-command" disabled>送出</button>
+  </div>
+
+  <!-- 操作按鈕 -->
+  <div class="button-group">
+    <button id="load-btn">讀取存檔</button>
+    <button id="save-btn" disabled>存檔</button>
+    <button id="help-btn">指令幫助</button>
+  </div>
+  
+  <!-- 讀取存檔的彈出視窗 -->
+  <div id="save-modal" style="
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+  ">
+    <div style="
+      background:#222;
+      border:1px solid #555;
+      padding:1rem;
+      max-height:80%;
+      max-width:400px;
+      overflow-y:auto;
+      border-radius:10px;
+    ">
+      <h3 style="text-align:center;">選擇要讀取的存檔</h3>
+      <ul id="save-list" style="list-style:none; padding:0;"></ul>
+      <div style="text-align:center; margin-top:1rem;">
+        <button onclick="confirmLoad()">確定</button>
+        <button onclick="closeSaveModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const log = document.getElementById('game-log');
+    const nameInput = document.getElementById('name-input');
+    const startBtn = document.getElementById('start-game');
+    const commandInput = document.getElementById('command-input');
+    const sendBtn = document.getElementById('send-command');
+    const helpBtn = document.getElementById('help-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const loadBtn = document.getElementById('load-btn');
+    const saveModal = document.getElementById('save-modal');
+    const saveList = document.getElementById('save-list');
+
+    let gameStarted = false;
+
+    startBtn.addEventListener('click', () => {
+      if (!gameStarted) {
+        // 開始遊戲邏輯
+        const playerName = nameInput.value.trim();
+        if (playerName === '') return;
+
+        fetch('/api/game/check-name', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: playerName })
+        })
+          .then(res => res.text())
+          .then(data => {
+            log.innerText += `\n【系統】${data}`;
+            log.scrollTop = log.scrollHeight;
+            if (data.includes('成功')) {
+              gameStarted = true;
+              loadBtn.disabled = true;
+              saveBtn.disabled = false;
+              nameInput.disabled = true;
+              commandInput.disabled = false;
+              sendBtn.disabled = false;
+              startBtn.textContent = '結束遊戲';
+              log.innerText += `\n【系統遊戲提示】👾 [ 遊戲開始！歡迎 ${playerName} 勇者！ ]\n\t你目前在：森林路口\n\t你看到：哥布林（HP: 30）\n\t可用方向：" north\n\t有一瓶發光的治療藥水躺在地上\n`;
+            }
+          });
+      } else {
+        fetch('/api/game/exit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+          .then(res => res.text())
+          .then(data => {
+            log.innerText += `\n【系統遊戲提示】${data}\n`;
+            log.scrollTop = log.scrollHeight;
+            gameStarted = false;
+            loadBtn.disabled = false;
+            saveBtn.disabled = true;
+            nameInput.disabled = false;
+            commandInput.disabled = true;
+            sendBtn.disabled = true;
+            startBtn.textContent = '開始遊戲';
+            nameInput.value = '';
+          });
+      }
+    });
+
+    sendBtn.addEventListener('click', () => {
+      const command = commandInput.value.trim();
+      if (command === '') return;
+
+      fetch('/api/game/command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: command
+      })
+        .then(res => res.text())
+        .then(data => {
+          log.innerText += `\n\t> ${command}\n${data}\n`;
+          log.scrollTop = log.scrollHeight;
+          commandInput.value = '';
+        });
+    });
+
+    loadBtn.addEventListener('click', () => {
+      fetch('/api/game/player-list')
+        .then(res => res.json())
+        .then(data => {
+          saveList.innerHTML = '';
+          selectedPlayerName = null;
+
+          data.forEach(save => {
+            const li = document.createElement('li');
+            li.textContent = `玩家: ${save.playerName} HP: ${save.hp} 目前所在: ${save.currentRoom} 擊殺數: ${save.killCount}`;
+            li.style.cursor = 'pointer';
+            li.style.padding = '0.5rem';
+            li.style.borderBottom = '1px solid #444';
+
+            li.onclick = () => {
+              // 清除其他選擇
+              [...saveList.children].forEach(c => c.style.backgroundColor = '');
+              li.style.backgroundColor = '#444';
+              selectedPlayerName = save.playerName;
+            };
+
+            saveList.appendChild(li);
+          });
+
+          saveModal.style.display = 'flex'; // 改為阻塞式全螢幕視窗
+        });
+    });
+
+    function closeSaveModal() {
+      saveModal.style.display = 'none';
+    }
+
+    function confirmLoad() {
+      if (!selectedPlayerName) {
+        alert("請先選擇一筆存檔！");
+        return;
+      }
+
+      fetch(`/api/game/load/${selectedPlayerName}`)
+        .then(res => res.text())
+        .then(data => {
+          log.innerText += `\n【系統】✅讀取存檔成功`;
+          log.innerText += `\n【系統遊戲提示】${data}\n`;
+          log.scrollTop = log.scrollHeight;
+          nameInput.value = selectedPlayerName;
+          nameInput.disabled = true;
+          loadBtn.disabled = true;
+          saveBtn.disabled = false;
+          startBtn.textContent = '結束遊戲';
+          commandInput.disabled = false;
+          sendBtn.disabled = false;
+          gameStarted = true;
+          closeSaveModal();
+        });
+    }
+
+    saveBtn.addEventListener('click', () => {
+      fetch('/api/game/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then(res => res.text())
+        .then(data => {
+          log.innerText += `\n【系統】${data}`;
+          log.scrollTop = log.scrollHeight;
+        });
+    });
+
+    helpBtn.addEventListener('click', () => {
+      fetch('/api/game/help', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then(res => res.text())
+        .then(data => {
+          log.innerText += `\n【系統遊戲提示】${data}\n`;
+          log.scrollTop = log.scrollHeight;
+        });
+    });
+
+    commandInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendBtn.click();
+      }
+    });
+  </script>
+
+</body>
+</html>

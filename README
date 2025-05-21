@@ -102,14 +102,14 @@ http GET http://localhost:8080/api/app/plant-image/2
 * Azure Container App：部署成功 ✅
 * MySQL：使用 Azure Flexible MySQL 資料庫 ✅
 * Docker：可透過 Dockerfile 打包並部署
-* 外部 API 可透過公開 Ingress URL 存取（非 internal）
 
 ---
 
 ## 🧾 注意事項
 
 * 測試人員帳號（"測試用戶"）預設由 Flutter 端控制，不由後端處理。
-* 若要上線，可考慮加入 Token 驗證、Service 層封裝、植物日誌記錄等功能。
+* 可藉由 POST /api/app/users/login` 登入取得 ID，並使用該 ID 進行後續API請求。
+* 種植物時，`type` 參數只可選擇 "bud"。
 
 ---
 

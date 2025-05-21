@@ -1,1 +1,120 @@
-/**/
+# Cyberbotanic - Spring Boot API
+
+這是賽博植物園（Cyberbotanic）後端專案，使用 Spring Boot 開發，提供 RESTful API 支援前端 Flutter App 進行植物養成、狀態顯示與資料儲存等功能。
+
+---
+
+## 📦 專案結構
+
+```
+src/main/java/com/cyberbotanic/
+├── controller/      # REST API 控制器 (AppController)
+├── dto/             # 請求參數用的 DTO 類別 (UserSave, PlantSave)
+├── model/           # JPA Entity 類別 (User, Plant)
+├── repository/      # 資料存取層 (UserRepository, PlantRepository)
+├── data/            # 靜態 ASCII 圖資料 (PlantVisuals)
+└── service/         # 可擴充的業務邏輯層（目前尚未使用）
+```
+
+---
+
+## 🌱 API 規格
+
+### 📌 使用者註冊
+
+```
+POST /api/app/users/register
+```
+
+* 請求：`{ "name": "使用者名稱" }`
+* 回應：成功建立使用者 ID / 錯誤訊息
+
+### 📌 使用者登入
+
+```
+POST /api/app/users/login
+```
+
+* 請求：`{ "name": "使用者名稱" }`
+* 回應：`userId` / 找不到使用者錯誤
+
+### 📌 種植物
+
+```
+POST /api/app/plants
+```
+
+* 請求：
+
+```json
+{
+  "userId": 1,
+  "type": "bud",
+  "nickname": "小仙人掌",    // 可選
+  "pot": "default"           // 可選，預設為 "default"
+}
+```
+
+* 回應："植物已成功種下！"
+
+### 📌 顯示植物 ASCII 圖（含盆栽）
+
+```
+GET /api/app/plant-image/{plantId}
+```
+
+* 回傳：對應植物種類與成長階段的 ASCII 圖
+
+---
+
+## 🧪 測試方式（開發階段）
+
+使用 [httpie](https://httpie.io/) 測試 API 範例如下：
+
+### 建立使用者：
+
+```bash
+http POST http://localhost:8080/api/app/users/register name="測試用戶"
+```
+
+### 登入取得 ID：
+
+```bash
+http POST http://localhost:8080/api/app/users/login name="測試用戶"
+```
+
+### 種植物：
+
+```bash
+http POST http://localhost:8080/api/app/plants userId:=1 type="bud"
+```
+
+### 顯示植物圖案：
+
+```bash
+http GET http://localhost:8080/api/app/plant-image/2
+```
+
+---
+
+## 🚀 部署狀態
+
+* Azure Container App：部署成功 ✅
+* MySQL：使用 Azure Flexible MySQL 資料庫 ✅
+* Docker：可透過 Dockerfile 打包並部署
+* 外部 API 可透過公開 Ingress URL 存取（非 internal）
+
+---
+
+## 🧾 注意事項
+
+* 測試人員帳號（"測試用戶"）預設由 Flutter 端控制，不由後端處理。
+* 若要上線，可考慮加入 Token 驗證、Service 層封裝、植物日誌記錄等功能。
+
+---
+
+## 🧑‍💻 開發者
+
+* 後端開發：Spring Boot
+* 前端開發：Flutter
+* 應用程式URL：https://cyberbotanic.politehill-c76aad8c.japaneast.azurecontainerapps.io

@@ -11,6 +11,7 @@ import com.cyberbotanic.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/app")
@@ -33,6 +34,37 @@ public class AppController {
         userRepository.save(user);
         return ResponseEntity.ok("使用者已建立成功");
     }
+
+    @PostMapping("/users/login")
+    public ResponseEntity<?> loginUser(@RequestBody @Valid UserSave userSave) {
+        String name = userSave.getName();
+
+        Optional<User> userOpt = userRepository.findByName(name);
+        if (userOpt.isPresent()) {
+            return ResponseEntity.ok(userOpt.get().getId());
+        } else {
+            return ResponseEntity
+                .badRequest()
+                .body("找不到此使用者，請先註冊。");
+        }
+    }
+
+
+    @PostMapping("/users/register")
+    public ResponseEntity<String> registerUser(@RequestBody @Valid UserSave userSave) {
+        String name = userSave.getName();
+
+        if (userRepository.findByName(name).isPresent()) {
+            return ResponseEntity.badRequest().body("此名稱已被使用，請選擇其他名稱");
+        }
+
+        User user = new User();
+        user.setName(name);
+        userRepository.save(user);
+        return ResponseEntity.ok("使用者註冊成功");
+    }
+
+
 
     @PostMapping("/plants")
     public ResponseEntity<String> createPlant(@RequestBody @Valid PlantSave plantSave) {
@@ -78,6 +110,7 @@ public class AppController {
             return ResponseEntity.badRequest().body(e.getMessage()); // 回傳 400 錯誤與訊息
         }
     }
+
 
 
     // 工具方法：將數值階段轉換為名稱

@@ -41,7 +41,7 @@ POST /api/app/users/login
 ### 📌 種植物
 
 ```
-POST /api/app/plants
+POST /api/app/plants/action
 ```
 
 * 請求：
@@ -86,7 +86,7 @@ http POST http://localhost:8080/api/app/users/login name="測試用戶"
 ### 種植物：
 
 ```bash
-http POST http://localhost:8080/api/app/plants userId:=1 type="bud"
+http POST http://localhost:8080/api/app/plants/action userId:=1 type="bud"
 ```
 
 ### 顯示植物圖案：

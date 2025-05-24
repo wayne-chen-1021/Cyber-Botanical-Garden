@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PlantRepository extends JpaRepository<Plant, Long> {
     List<Plant> findByUserId(Long userId); // 根據使用者查詢植物清單
+    
 }

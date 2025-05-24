@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/app")
@@ -66,7 +67,7 @@ public class AppController {
 
 
 
-    @PostMapping("/plants")
+    @PostMapping("/plants/action")
     public ResponseEntity<String> createPlant(@RequestBody @Valid PlantSave plantSave) {
         User user = userRepository.findById(plantSave.getUserId())
             .orElseThrow(() -> new IllegalArgumentException("找不到使用者 ID：" + plantSave.getUserId()));
@@ -111,7 +112,14 @@ public class AppController {
         }
     }
 
-
+    @GetMapping("/plants/user/{userId}")
+    public ResponseEntity<?> getPlantsByUserId(@PathVariable Long userId) {
+        List<Plant> plants = plantRepository.findByUserId(userId);
+        if (plants.isEmpty()) {
+            return ResponseEntity.ok("此使用者尚未種植任何植物。");
+        }
+        return ResponseEntity.ok(plants);
+    }
 
     // 工具方法：將數值階段轉換為名稱
     private String getStageName(int stage) {
@@ -119,7 +127,8 @@ public class AppController {
             case 0 -> "seed";
             case 1 -> "sprout";
             case 2 -> "grown";
-            case 3 -> "bloom";
+            case 3 -> "blooming";
+            case 4 -> "bloomed";
             default -> "seed";
         };
     }

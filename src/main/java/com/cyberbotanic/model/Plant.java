@@ -2,6 +2,7 @@ package com.cyberbotanic.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "plants")
@@ -13,6 +14,7 @@ public class Plant {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @Column(nullable = false)

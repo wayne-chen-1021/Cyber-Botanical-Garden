@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class PlantVisuals {
 
     public static class PlantStageVisual {
-        public final String stage;     // 例如 "seed", "sprout", "grown", "bloom"
+        public final String stage;     // 例如 "seed", "sprout", "grown", "blooming", "bloomed"
         public final String asciiArt;
 
         public PlantStageVisual(String stage, String asciiArt) {
@@ -32,8 +32,26 @@ public class PlantVisuals {
     public static final Map<String, PotVisual> POTS = new HashMap<>();
 
     static {
-        // ========== 植物各成長階段 ==========
+        // ========== 無種物 ==========
+        Map<String, PlantStageVisual> noneStages = new HashMap<>();
+        noneStages.put("none", new PlantStageVisual("none", """
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss"""));
+        // ========== 測試植物 ==========
         Map<String, PlantStageVisual> budStages = new HashMap<>();
+        // 種子
         budStages.put("seed", new PlantStageVisual("seed", """
             ssssssssssssssssssssssssssssssssssssssss
             ssssssssssssssssssssssssssssssssssssssss
@@ -48,13 +66,9 @@ public class PlantVisuals {
             ssssssssssssssssssssssssssssssssssssssss
             ssssssssssssssssssssssssssssssssssssssss
             ssssssssssssssssssssssssssssssssssssssss
-            ssssssssssssssssssssssssssssssssssssssss
-            ssssssssssssssssssssssssssssssssssssssss
             sssssssssssssssssOOOOOOsssssssssssssssss"""));
-        
+        // 發芽
         budStages.put("sprout", new PlantStageVisual("sprout", """
-            ssssssssssssssssssssssssssssssssssssssss
-            ssssssssssssssssssssssssssssssssssssssss
             ssssssssssssssssssssssssssssssssssssssss
             ssssssssssssssssssssssssssssssssssssssss
             ssssssssssssssssssssssssssssssssssssssss
@@ -69,6 +83,42 @@ public class PlantVisuals {
             sssssssssssssssdMMMMMMMbssssssssssssssss
             sssssssssssssssssssMM*ssssssssssssssssss
             ssssssssssssssssss.MMsssssssssssssssssss"""));
+        // 成長
+        budStages.put("grown", new PlantStageVisual("grown", """
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            ssssssssssssssssssssssssssssssssssssssss
+            sssssssssssssssssssTTsssssssssssssssssss
+            Sssssssssssssssssssdbsssssssssssssssssss
+            sssssssssss.dMMMb.sdbss.dMMMb.ssssssssss
+            ssssssssssssssdMMMMMMMMMMMMbssssssssssss
+            ssssssssssssssssssdMMMMMbsssssssssssssss
+            ssssssssssssssssssssMMssssssssssssssssss
+            sssssss.dMMMb.ssssssMMssssssdMMMb.ssssss
+            ssssssssssdMMMMMbssMMMsssdMMMMbsssssssss
+            Ssssssssssss*MMMMMMMMMMMMMMbssssssssssss
+            Ssssssssssssssssss.MMM.sssssssssssssssss
+            ssssssssssssssssss.MMM.sssssssssssssssss"""));
+        // 開花
+        budStages.put("blooming", new PlantStageVisual("blooming", """
+            sssssssssssssssssMMMMMMsssssssssssssssss
+            ssssssssssssssssMMMMMMMMssssssssssssssss
+            sssssssssssssssssMMMMMMsssssssssssssssss
+            sssssssssssssssssssMMsssssssssssssssssss
+            sssssssssssssssssssMMsssssssssssssssssss
+            SssssssssssssssssssMMsssssssssssssssssss
+            sssssssss..odMMMb.sMMMs.dMMMbo..ssssssss
+            ssssssssssssssdMMMMMMMMMMMMbssssssssssss
+            ssssssssssssssssssdMMMMMbsssssssssssssss
+            sssssssssssssssssssMMMssssssssssssssssss
+            sssssss..odMMMMMbssMMMsssdMMMMbo..ssssss
+            Ssssssssssss*MMMMMMMMMMMMMMbsssssSssssss
+            Ssssssssssssssssss.MMM.sssssssssssssssss
+            ssssssssssssssssss.MMM.sssssssssssssssss"""));
+
+
+        // 各成長階段加入對應植物圖片顯示
+        PLANTS.put("none", noneStages);
         PLANTS.put("bud", budStages);
 
         // ========== 盆栽樣式 ==========
@@ -94,7 +144,7 @@ public class PlantVisuals {
 class PlantVisualsTest {
     public static void main(String[] args) {
         String type = "bud";
-        String stage = "sprout";
+        String stage = "blooming";
         String potStyle = "default";
 
         String visual = PlantVisuals.render(type, stage, potStyle);

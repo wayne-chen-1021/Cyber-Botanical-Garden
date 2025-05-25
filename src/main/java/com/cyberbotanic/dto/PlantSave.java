@@ -14,9 +14,12 @@ public class PlantSave {
     private String pot;
     private String nickname;
 
+    private Long plantId;
+
     public PlantSave() {}
 
-    public PlantSave(Long userId, String type, String nickname) {
+    public PlantSave(Long plantId, Long userId, String type, String nickname) {
+        this.plantId = plantId;
         this.userId = userId;
         this.type = type;
         this.nickname = nickname;
@@ -33,4 +36,7 @@ public class PlantSave {
 
     public String getPot() { return pot; }
     public void setPot(String pot) { this.pot = pot; }
+
+    public Long getPlantId() { return plantId; }
+    public void setPlantId(Long plantId) { this.plantId = plantId; }
 }

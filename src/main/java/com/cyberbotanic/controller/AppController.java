@@ -7,6 +7,7 @@ import com.cyberbotanic.model.Plant;
 import com.cyberbotanic.model.User;
 import com.cyberbotanic.repository.PlantRepository;
 import com.cyberbotanic.repository.UserRepository;
+import com.cyberbotanic.service.Planting;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,12 @@ public class AppController {
 
     private final UserRepository userRepository;
     private final PlantRepository plantRepository;
+    private final Planting plantingService;
 
-    public AppController(UserRepository userRepository, PlantRepository plantRepository) {
+    public AppController(UserRepository userRepository, PlantRepository plantRepository, Planting plantingService) {
         this.userRepository = userRepository;
         this.plantRepository = plantRepository;
+        this.plantingService = plantingService;
     }
 
     /**
@@ -50,7 +53,6 @@ public class AppController {
         }
     }
 
-
     @PostMapping("/users/register")
     public ResponseEntity<String> registerUser(@RequestBody @Valid UserSave userSave) {
         String name = userSave.getName();
@@ -66,32 +68,21 @@ public class AppController {
     }
 
 
-
-    @PostMapping("/plants/action")
-    public ResponseEntity<String> createPlant(@RequestBody @Valid PlantSave plantSave) {
-        User user = userRepository.findById(plantSave.getUserId())
-            .orElseThrow(() -> new IllegalArgumentException("找不到使用者 ID：" + plantSave.getUserId()));
-
-        Plant plant = new Plant();
-        plant.setUser(user);
-        plant.setType(plantSave.getType());
-
-        if (plantSave.getNickname() != null && !plantSave.getNickname().isBlank()) {
-            plant.setNickname(plantSave.getNickname());
+    @PostMapping("/plants/action/{action}")
+    public ResponseEntity<String> plantAction(
+        @PathVariable String action,
+        @RequestBody @Valid PlantSave plantSave
+    ) {
+        try {
+            return switch (action) {
+                case "plant" -> ResponseEntity.ok(plantingService.plant(plantSave));
+                case "water" -> ResponseEntity.ok(plantingService.water(plantSave));
+                case "fertilize" -> ResponseEntity.ok(plantingService.fertilize(plantSave));
+                default -> ResponseEntity.badRequest().body("未知的 action：" + action);
+            };
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        plant.setPot(
-            (plantSave.getPot() != null && !plantSave.getPot().isBlank())
-                ? plantSave.getPot()
-                : "default"
-        );
-
-        plant.setGrowthStage(0);
-        plant.setWater(100);
-        plant.setNutrition(100);
-        plant.setStatus("healthy");
-
-        plantRepository.save(plant);
-        return ResponseEntity.ok("植物已成功種下！");
     }
 
     @GetMapping("/plant-image/{plantId}")

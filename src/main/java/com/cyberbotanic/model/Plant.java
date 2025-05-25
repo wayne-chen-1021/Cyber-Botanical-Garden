@@ -24,8 +24,8 @@ public class Plant {
 
     private int growthStage = 0;
 
-    private int water = 100;
-    private int nutrition = 100;
+    private int water = 0;
+    private int nutrition = 0;
 
     private String status = "healthy";
 
@@ -75,4 +75,14 @@ public class Plant {
 
     public String getPot() { return pot; }
     public void setPot(String pot) { this.pot = pot; }
+
+    public void growthStage () {
+        if (nutrition >= 100 && water >= 100) {
+            if (growthStage < 3) {
+                growthStage++;
+                water = 0; // 重置水分
+                nutrition = 0; // 重置營養
+            }
+        }
+    }
 }

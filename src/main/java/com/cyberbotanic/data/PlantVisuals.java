@@ -88,7 +88,7 @@ public class PlantVisuals {
             ssssssssssssssssssssssssssssssssssssssss
             ssssssssssssssssssssssssssssssssssssssss
             ssssssssssssssssssssssssssssssssssssssss
-            sssssssssssssssssssTTsssssssssssssssssss
+            sssssssssssssssssss..sssssssssssssssssss
             Sssssssssssssssssssdbsssssssssssssssssss
             sssssssssss.dMMMb.sdbss.dMMMb.ssssssssss
             ssssssssssssssdMMMMMMMMMMMMbssssssssssss

@@ -1,88 +1,84 @@
 package com.cyberbotanic.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "plants")
-public class Plant {
-
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "plant_type")
+public abstract class Plant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
 
-    @Column(nullable = false)
-    private String type; // e.g., "cactus", "rose"
-    private String pot = "default";  // 預設樣式
-    private String nickname;
+    private final String type;
+    private String name;
+    private String pot;
 
-    private int growthStage = 0;
+    protected int waterLevel;
+    protected int nutrientLevel;
+    protected int growthStage;
+    protected int healthStatus;
 
-    private int water = 0;
-    private int nutrition = 0;
-
-    private String status = "healthy";
-
-    private LocalDateTime plantedAt = LocalDateTime.now();
-
-    // Constructors
-    public Plant() {}
-
-    public Plant(User user, String type, String nickname) {
-        this.user = user;
-        this.type = type;
-        this.nickname = nickname;
+    public Plant(String type) {
+        this(type, "NULL");
     }
 
-    public Plant(User user, String type) {
-        this.user = user;
+    public Plant(String type, String name) {
         this.type = type;
-        this.nickname = "Demo";
+        this.name = name;
+        this.pot = "Original"; // Default pot type
+        this.waterLevel = 0; // Default water level
+        this.nutrientLevel = 0; // Default nutrient level
+        this.growthStage = 0; // Initial growth stage
+        this.healthStatus = 100; // Initial health status
     }
 
-    // Getters & Setters
-    public Long getId() { return id; }
+    public abstract void isGrown();
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public Long getId() {return id;}
+    public void setId(Long id) {this.id = id;}
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public User getUser() {return user;}
+    public void setUser(User user) {this.user = user;}
 
-    public String getNickname() { return nickname; }
-    public void setNickname(String nickname) { this.nickname = nickname; }
+    public String getType() {return type; }
 
-    public int getGrowthStage() { return growthStage; }
-    public void setGrowthStage(int growthStage) { this.growthStage = growthStage; }
+    public String getName() {return name; }
+    public void setName(String name) {this.name = name;}
 
-    public int getWater() { return water; }
-    public void setWater(int water) { this.water = water; }
-
-    public int getNutrition() { return nutrition; }
-    public void setNutrition(int nutrition) { this.nutrition = nutrition; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public LocalDateTime getPlantedAt() { return plantedAt; }
-    public void setPlantedAt(LocalDateTime plantedAt) { this.plantedAt = plantedAt; }
-
-    public String getPot() { return pot; }
-    public void setPot(String pot) { this.pot = pot; }
-
-    public void growthStage () {
-        if (nutrition >= 100 && water >= 100) {
-            if (growthStage < 3) {
-                growthStage++;
-                water = 0; // 重置水分
-                nutrition = 0; // 重置營養
-            }
+    public String getPot() {return pot;}
+    public void setPot(String pot) {
+        if (pot != null && !pot.isEmpty()) {
+            this.pot = pot;
         }
     }
+
+    public int getWaterLevel() {return waterLevel;}
+    public void setWaterLevel(int waterLevel) {this.waterLevel = waterLevel;}
+
+    public int getNutrientLevel() {return nutrientLevel;}
+    public void setNutrientLevel(int nutrientLevel) {this.nutrientLevel = nutrientLevel;} 
+
+    public int getGrowthStage() {return growthStage;}
+    public void setGrowthStage(int growthStage) {this.growthStage = growthStage;
+    }
+    public int getHealthStatus() {return healthStatus;}
+    public void setHealthStatus(int healthStatus) {this.healthStatus = healthStatus;}
+
+    @Override
+    public String toString() {
+        return String.format(
+            "{name='%s', type='%s', water=%d, nutrient=%d, health=%d, growthStage=%d, pot='%s'}",
+            name, type, waterLevel, nutrientLevel, healthStatus, growthStage, pot
+        );
+    }
+
 }

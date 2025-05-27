@@ -35,6 +35,13 @@ public class AppController {
         return ResponseEntity.ok(appService.login(userName));
     }
 
+    @PostMapping("/{userId}/plant")
+    public ResponseEntity<String> plantSeed(
+            @PathVariable Long userId,
+            @RequestBody ActionRequest request) {
+        return ResponseEntity.ok(appService.plantSeed(userId, request));
+    }
+
     @PostMapping("/{userId}/{plantId}/water")
     public ResponseEntity<Map<String, Object>> waterPlant(
             @PathVariable Long userId,
@@ -54,13 +61,6 @@ public class AppController {
             @PathVariable Long userId,
             @PathVariable Long plantId) {
         return ResponseEntity.ok(appService.prunePlant(userId, plantId));
-    }
-
-    @PostMapping("/{userId}/plant")
-    public ResponseEntity<String> plantSeed(
-            @PathVariable Long userId,
-            @RequestBody ActionRequest request) {
-        return ResponseEntity.ok(appService.plantSeed(userId, request));
     }
 
     @GetMapping("/{userId}/plants")

@@ -9,11 +9,9 @@
 ```
 src/main/java/com/cyberbotanic/
 ├── controller/      # REST API 控制器 (AppController)
-├── dto/             # 請求參數用的 DTO 類別 (UserSave, PlantSave)
 ├── model/           # JPA Entity 類別 (User, Plant)
 ├── repository/      # 資料存取層 (UserRepository, PlantRepository)
-├── data/            # 靜態 ASCII 圖資料 (PlantVisuals)
-└── service/         # 可擴充的業務邏輯層（目前尚未使用）
+└── service/         # 可擴充的業務邏輯層
 ```
 
 ---
@@ -71,29 +69,75 @@ GET /api/app/plant-image/{plantId}
 
 使用 [httpie](https://httpie.io/) 測試 API 範例如下：
 
-### 建立使用者：
+### 建立 使用者：
 
 ```bash
-http POST http://localhost:8080/api/app/users/register name="測試用戶"
-```
+http POST http://localhost:8080/api/app/register userName="測試用戶"
+回傳格式：
+{
+    "message": "註冊成功",
+    "userId": 1
+}
 
-### 登入取得 ID：
+### 登入取得 用戶ID：
 
 ```bash
-http POST http://localhost:8080/api/app/users/login name="測試用戶"
+http POST http://localhost:8080/api/app/login userName="測試用戶"
 ```
+{
+    "message": "登入成功",
+    "userId": 1
+}
 
 ### 種植物：
 
 ```bash
-http POST http://localhost:8080/api/app/plants/action userId:=1 type="bud"
+http POST http://localhost:8080/api/app/1/plant plantType="weed"
 ```
+目前只能種植 "weed" 類型的植物。
+若成功回傳：種植成功 否則回傳：未知植物類型
 
-### 顯示植物圖案：
+### 澆水：
+```bash
+http POST http://localhost:8080/api/app/1/1/water userId:=1 plantId:=1
+```
+回傳結果：
+{
+    "grownthStage": 0,
+    "message": "澆水成功",
+    "plantId": 1
+}
+
+### 施肥：
+```bash
+http POST http://localhost:8080/api/app/1/1/fertilize userId:=1 plantId:=1
+```
+回傳結果：
+{
+    "grownthStage": 0,
+    "message": "施肥成功",
+    "plantId": 1
+}
+
+
+### 顯示使用者所有的植物清單：
 
 ```bash
-http GET http://localhost:8080/api/app/plant-image/2
+http GET http://localhost:8080/api/app/1/plants userId:=1
 ```
+回傳結果：
+[
+    {
+        "growthStage": 0,
+        "healthStatus": 100,
+        "id": 1,
+        "name": "NULL",
+        "nutrientLevel": 0,
+        "pot": "Original",
+        "type": "Weed",
+        "waterLevel": 0
+    }
+]
 
 ---
 
@@ -109,7 +153,7 @@ http GET http://localhost:8080/api/app/plant-image/2
 
 * 測試人員帳號（"測試用戶"）預設由 Flutter 端控制，不由後端處理。
 * 可藉由 POST /api/app/users/login` 登入取得 ID，並使用該 ID 進行後續API請求。
-* 種植物時，`type` 參數只可選擇 "bud"。
+* 種植物時，`type` 參數只可選擇 "weed"。
 
 ---
 

@@ -99,7 +99,7 @@ http POST http://localhost:8080/api/app/1/plant plantType="weed"
 
 ### 澆水：
 ```bash
-http POST http://localhost:8080/api/app/1/1/water userId:=1 plantId:=1
+http POST http://localhost:8080/api/app/1/1/water
 ```
 回傳結果：
 {
@@ -110,7 +110,7 @@ http POST http://localhost:8080/api/app/1/1/water userId:=1 plantId:=1
 
 ### 施肥：
 ```bash
-http POST http://localhost:8080/api/app/1/1/fertilize userId:=1 plantId:=1
+http POST http://localhost:8080/api/app/1/1/fertilize
 ```
 回傳結果：
 {
@@ -123,7 +123,7 @@ http POST http://localhost:8080/api/app/1/1/fertilize userId:=1 plantId:=1
 ### 顯示使用者所有的植物清單：
 
 ```bash
-http GET http://localhost:8080/api/app/1/plants userId:=1
+http GET http://localhost:8080/api/app/1/plants
 ```
 回傳結果：
 [

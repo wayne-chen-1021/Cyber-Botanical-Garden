@@ -3,12 +3,16 @@ package com.cyberbotanic.service;
 import com.cyberbotanic.model.WeatherResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 public class WeatherService {
-    private static final String API_KEY = "f821195be0b535a1db9b2999877e5108";
+    @Value("${openweather.api.key}")
+    private String API_KEY;
+
     private static final String BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
 
     private final RestTemplate restTemplate = new RestTemplate();

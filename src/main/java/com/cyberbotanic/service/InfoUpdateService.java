@@ -22,7 +22,7 @@ public class InfoUpdateService {
     @Autowired
     private WeatherService weatherService;
 
-    @Scheduled(fixedRate = 15 * 1000) // 每15秒執行一次 (demo)
+    @Scheduled(fixedRate = 15 * 1000) // 每15秒執行一次更新植物狀態 (demo)
     public void updatePlantWaterLevels() {
         List<Plant> plants = plantRepository.findAllWithUser();
         for (Plant plant : plants) {
@@ -38,7 +38,7 @@ public class InfoUpdateService {
         }
     }
 
-    @Scheduled(fixedRate = 60 * 1000) // 每1分鐘執行一次
+    @Scheduled(fixedRate = 60 * 1000) // 每1分鐘執行一次更新使用者天氣資訊 (demo)
     public void updateUserWeather() {
         List<User> users = userRepository.findAll();
         for (User user : users) {

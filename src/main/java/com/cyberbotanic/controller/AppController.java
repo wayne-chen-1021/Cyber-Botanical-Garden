@@ -65,10 +65,19 @@ public class AppController {
         return ResponseEntity.ok(appService.prunePlant(userId, plantId));
     }
 
+    @PostMapping("/{userId}/{plantId}/rename")
+    public ResponseEntity<String> reNamePlant(
+            @PathVariable Long userId,
+            @PathVariable Long plantId,
+            @RequestBody Map<String, String> request) {
+        return ResponseEntity.ok(appService.reNamePlant(userId, plantId, request.get("newName")));
+    }
+
     @GetMapping("/{userId}/plants")
     public ResponseEntity<List<Plant>> getPlants(@PathVariable Long userId) {
         return ResponseEntity.ok(appService.getPlantsByUser(userId));
     }
+
 }
 
 

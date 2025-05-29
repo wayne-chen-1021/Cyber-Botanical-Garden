@@ -125,6 +125,21 @@ public class AppService {
 
         return "修剪成功";
     }
+    /* 重新命名 */
+    public String reNamePlant(Long userId, Long plantId, String newName) {
+        Optional<Plant> plantOpt = plantRepository.findById(plantId);
+        if (plantOpt.isEmpty()) return "植物不存在";
+
+        Plant plant = plantOpt.get();
+        if (!plant.getUser().getId().equals(userId)) {
+            return "這不是你的植物";
+        }
+
+        plant.setName(newName);
+        plantRepository.save(plant);
+
+        return "重新命名成功：" + newName;
+    }
     /* 可獲取使用者已種植之清單 */
     public List<Plant> getPlantsByUser(Long userId) {
         Optional<User> userOpt = userRepository.findById(userId);

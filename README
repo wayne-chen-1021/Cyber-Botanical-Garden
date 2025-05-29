@@ -48,7 +48,7 @@ POST /api/app/plants/action
 {
   "userId": 1,
   "type": "bud",
-  "nickname": "小仙人掌",    // 可選
+  "nickname": "小仙人掌",     // 可選
   "pot": "default"           // 可選，預設為 "default"
 }
 ```
@@ -82,7 +82,7 @@ http POST http://localhost:8080/api/app/register userName="測試用戶"
 ### 登入取得 用戶ID：
 
 ```bash
-http POST http://localhost:8080/api/app/login userName="測試用戶" latitude:=25.0478 longitude:=121.5319
+http POST http://localhost:8080/api/app/login userName="測試用戶" latitude:=23.6813 longitude:=120.5528
 ```
 {
     "message": "登入成功",

@@ -51,6 +51,8 @@ public class AppService {
                 user.setCity(weather.getCity());
                 userRepository.save(user);
             }
+            System.out.println("[LoginService]使用者登入：" + user.getUserName() + "，位置：" + 
+                                user.getLocation()[0] + ", " + user.getLocation()[1]);
             return Map.of("userId", user.getId(), "message", "登入成功");
         } else {
             return Map.of("userId", -1, "message", "使用者不存在");

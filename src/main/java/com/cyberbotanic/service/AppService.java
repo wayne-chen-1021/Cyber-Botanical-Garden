@@ -13,9 +13,14 @@ public class AppService {
     private final UserRepository userRepository;
     private final PlantRepository plantRepository;
 
-    public AppService(UserRepository userRepository, PlantRepository plantRepository) {
+    private WeatherService weatherService;
+
+    public AppService(UserRepository userRepository,
+                  PlantRepository plantRepository,
+                  WeatherService weatherService) {
         this.userRepository = userRepository;
         this.plantRepository = plantRepository;
+        this.weatherService = weatherService;
     }
 
     public Map<String, Object> register(String userName) {
@@ -28,10 +33,25 @@ public class AppService {
         return Map.of("userId", user.getId(), "message", "註冊成功");
     }
 
-    public Map<String, Object> login(String userName) {
-        Optional<User> user = userRepository.findByUserName(userName);
-        if (user.isPresent()) {
-            return Map.of("userId", user.get().getId(), "message", "登入成功");
+    public Map<String, Object> login(String userName, Double latitude, Double longitude) {
+        Optional<User> userOpt = userRepository.findByUserName(userName);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            if (latitude != null && longitude != null) {
+                user.setLocation(new double[]{latitude, longitude});
+                WeatherResponse weather = weatherService.getWeatherByLoc(user.getLocation());
+                double factor = switch (weather.getWeatherMain()) {
+                    case "Clear" -> -5.0;
+                    case "Clouds" -> -2.5;
+                    case "Drizzle", "Rain" -> +1.5;
+                    case "Thunderstorm" -> +3.0;
+                    default -> -3.0;
+                };
+                user.setWeatherFactor(factor);
+                user.setCity(weather.getCity());
+                userRepository.save(user);
+            }
+            return Map.of("userId", user.getId(), "message", "登入成功");
         } else {
             return Map.of("userId", -1, "message", "使用者不存在");
         }
@@ -66,7 +86,7 @@ public class AppService {
             return Map.of("plantId", plantId, "message", "這不是你的植物");
         }
 
-        plant.setWaterLevel(Math.min(plant.getWaterLevel() + 50, 100));
+        plant.setWaterLevel(plant.getWaterLevel() + 50);
         plant.isGrown(); // 檢查植物是否成長
         plantRepository.save(plant);
 
@@ -82,7 +102,7 @@ public class AppService {
             return Map.of("plantId", plantId, "message", "這不是你的植物");
         }
 
-        plant.setNutrientLevel(Math.min(plant.getNutrientLevel() + 50, 100));
+        plant.setNutrientLevel(plant.getNutrientLevel() + 50);
         plant.isGrown(); // 檢查植物是否成長
         plantRepository.save(plant);
 

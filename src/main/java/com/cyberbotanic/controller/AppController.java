@@ -30,9 +30,11 @@ public class AppController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> body) {
-        String userName = body.get("userName");
-        return ResponseEntity.ok(appService.login(userName));
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, Object> body) {
+        String userName = (String) body.get("userName");
+        Double latitude = body.get("latitude") instanceof Number ? ((Number) body.get("latitude")).doubleValue() : null;
+        Double longitude = body.get("longitude") instanceof Number ? ((Number) body.get("longitude")).doubleValue() : null;
+        return ResponseEntity.ok(appService.login(userName, latitude, longitude));
     }
 
     @PostMapping("/{userId}/plant")

@@ -62,10 +62,24 @@ public abstract class Plant {
     }
 
     public int getWaterLevel() {return waterLevel;}
-    public void setWaterLevel(int waterLevel) {this.waterLevel = waterLevel;}
+    public void setWaterLevel(int waterLevel) {
+        if (waterLevel < 0) {
+            waterLevel = 0; // Ensure water level is not negative
+        } else if (waterLevel > 100) {
+            waterLevel = 100; // Cap water level at 100
+        }
+        this.waterLevel = waterLevel;
+    }
 
     public int getNutrientLevel() {return nutrientLevel;}
-    public void setNutrientLevel(int nutrientLevel) {this.nutrientLevel = nutrientLevel;} 
+    public void setNutrientLevel(int nutrientLevel) {
+        if (nutrientLevel < 0) {
+            nutrientLevel = 0; // Ensure nutrient level is not negative
+        } else if (nutrientLevel > 100) {
+            nutrientLevel = 100; // Cap nutrient level at 100
+        }
+        this.nutrientLevel = nutrientLevel;
+    } 
 
     public int getGrowthStage() {return growthStage;}
     public void setGrowthStage(int growthStage) {this.growthStage = growthStage;

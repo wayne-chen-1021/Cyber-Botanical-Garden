@@ -11,6 +11,9 @@ public class User {
     private Long id;
 
     private String userName;
+    private String city;
+    private double latitude, longitude;
+    private double weatherFactor;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Plant> plants;
@@ -48,4 +51,21 @@ public class User {
             System.out.println("No plants found for user: " + userName);
         }
     }
+
+    public double[] getLocation() {
+        return new double[]{latitude, longitude};
+    }
+    public void setLocation(double[] location) {
+        if (location != null && location.length == 2) {
+            latitude = location[0];
+            longitude = location[1];
+        }
+    }
+
+    public String getCity () {return city;}
+    public void setCity (String city) {this.city = city;}
+
+    public double getWeatherFactor() {return weatherFactor;}
+    public void setWeatherFactor(double weatherFactor) {this.weatherFactor = weatherFactor;}
+    
 }

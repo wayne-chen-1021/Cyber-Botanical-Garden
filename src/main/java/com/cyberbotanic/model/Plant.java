@@ -35,13 +35,14 @@ public abstract class Plant {
         this.type = type;
         this.name = name;
         this.pot = "Original"; // Default pot type
-        this.waterLevel = 0; // Default water level
-        this.nutrientLevel = 0; // Default nutrient level
+        this.waterLevel = 50; // Default water level
+        this.nutrientLevel = 50; // Default nutrient level
         this.growthStage = 0; // Initial growth stage
         this.healthStatus = 100; // Initial health status
     }
 
     public abstract void isGrown();
+    public abstract void isDead();
 
     public Long getId() {return id;}
     public void setId(Long id) {this.id = id;}
@@ -85,7 +86,14 @@ public abstract class Plant {
     public void setGrowthStage(int growthStage) {this.growthStage = growthStage;
     }
     public int getHealthStatus() {return healthStatus;}
-    public void setHealthStatus(int healthStatus) {this.healthStatus = healthStatus;}
+    public void setHealthStatus(int healthStatus) {
+        if (healthStatus < 0) {
+            healthStatus = 0; // Ensure health status is not negative
+        } else if (healthStatus > 100) {
+            healthStatus = 100; // Cap health status at 100
+        }
+        this.healthStatus = healthStatus;
+    }
 
     @Override
     public String toString() {

@@ -119,6 +119,16 @@ http POST http://localhost:8080/api/app/1/1/fertilize
     "plantId": 1
 }
 
+### 植物重新命名
+'```bash
+http POST http://localhost:8080/api/app/1/1/rename nickname="小仙人掌"
+```
+回傳結果：
+{
+    "message": "重新命名成功：小仙人掌",
+}
+
+
 
 ### 顯示使用者所有的植物清單：
 

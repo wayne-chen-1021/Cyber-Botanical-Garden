@@ -88,6 +88,10 @@ public class AppService {
             return Map.of("plantId", plantId, "message", "這不是你的植物");
         }
 
+        // 檢查植物是否已死亡
+        if (plant.getGrowthStage() == -1) {
+            return Map.of("plantId", plantId, "message", "這個植物已經死亡，無法澆水");
+        }
         plant.setWaterLevel(plant.getWaterLevel() + 50);
         plant.isGrown(); // 檢查植物是否成長
         plantRepository.save(plant);
@@ -104,6 +108,10 @@ public class AppService {
             return Map.of("plantId", plantId, "message", "這不是你的植物");
         }
 
+        // 檢查植物是否已死亡
+        if (plant.getGrowthStage() == -1) {
+            return Map.of("plantId", plantId, "message", "這個植物已經死亡，無法施肥");
+        }
         plant.setNutrientLevel(plant.getNutrientLevel() + 50);
         plant.isGrown(); // 檢查植物是否成長
         plantRepository.save(plant);

@@ -121,7 +121,7 @@ http POST http://localhost:8080/api/app/1/1/fertilize
 
 ### 植物重新命名
 '```bash
-http POST http://localhost:8080/api/app/1/1/rename nickname="小仙人掌"
+http POST http://localhost:8080/api/app/1/1/rename newName="小仙人掌"
 ```
 回傳結果：
 {

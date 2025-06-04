@@ -4,6 +4,7 @@ import com.cyberbotanic.repository.*;
 import com.cyberbotanic.model.*;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Map;
 
@@ -135,6 +136,21 @@ public class AppService {
 
         return "修剪成功";
     }
+    /* 換盆（目前實作為好友互動模式） */
+    public Map<String, Object> changePot(Long userId, Long plantId) {
+        Optional<Plant> plantOpt = plantRepository.findById(plantId);
+        if (plantOpt.isEmpty()) return Map.of("plantId", -1, "message", "該植物不存在");
+
+        Plant plant = plantOpt.get();
+        if (plant.getUser().getId().equals(userId)) {
+            return Map.of("plantId", plantId, "message", "不能對我的植物好友互動");
+        }
+        plant.setPot("change");
+
+        plantRepository.save(plant);
+
+        return Map.of("plantId", plantId, "message", "好友互動成功");
+    }
     /* 重新命名 */
     public String reNamePlant(Long userId, Long plantId, String newName) {
         Optional<Plant> plantOpt = plantRepository.findById(plantId);
@@ -154,6 +170,42 @@ public class AppService {
     public List<Plant> getPlantsByUser(Long userId) {
         Optional<User> userOpt = userRepository.findById(userId);
         return userOpt.map(User::getPlants).orElse(List.of());
+    }
+    /* 可獲取使用者之好友清單 */
+    public List<Map<String, Object>> getFriendsByUserId(Long userId) {
+        return userRepository.findById(userId)
+                .map(User::getFriends)
+                .orElse(List.of())
+                .stream()
+                .map(friend -> Map.<String, Object>of(
+                    "id", friend.getId(),
+                    "friendName", friend.getUserName()))
+                .collect(Collectors.toList());
+    }
+    /* 使用者加入好友 */
+    public String addFriend(Long userId, String friendName) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<User> friendOpt = userRepository.findByUserName(friendName);
+
+        if (userOpt.isEmpty() || friendOpt.isEmpty()) {
+            return "使用者不存在";
+        }
+
+        User user = userOpt.get();
+        User friend = friendOpt.get();
+
+        if (user.getId().equals(friend.getId())) {
+            return "無法將自己加入為好友";
+        }
+
+        if (user.getFriends().contains(friend)) {
+            return "已經是好友了";
+        }
+
+        user.addFriend(friend);
+        userRepository.save(user);
+
+        return "成功加入好友：" + friend.getUserName();
     }
 
 }

@@ -22,7 +22,7 @@ public class InfoUpdateService {
     @Autowired
     private WeatherService weatherService;
 
-    @Scheduled(fixedRate = 30 * 1 * 1000) // 每30秒執行一次更新植物狀態 (demo)
+    @Scheduled(fixedRate = 30 * 60 * 1000) // 每30秒執行一次更新植物狀態 (demo)
     public void updatePlantWaterLevels() {
         List<Plant> plants = plantRepository.findAllWithUser();
         for (Plant plant : plants) {
@@ -31,8 +31,7 @@ public class InfoUpdateService {
 
             if (plant.getGrowthStage() == -1) {
                 // 植物已死亡，跳過更新
-                System.out.println("[PlantUpdateService] " + plant.getName() + " in " + owner.getCity() +
-                        " is dead");
+                //System.out.println("[PlantUpdateService] " + plant.getName() + " in " + owner.getCity() + " is dead");
                 continue;
             }
 

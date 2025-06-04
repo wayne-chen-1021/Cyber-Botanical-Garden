@@ -17,63 +17,23 @@ src/main/java/com/cyberbotanic/
 ---
 
 ## 🌱 API 規格
-
-### 📌 使用者註冊
-
-```
-POST /api/app/users/register
-```
-
-* 請求：`{ "name": "使用者名稱" }`
-* 回應：成功建立使用者 ID / 錯誤訊息
-
-### 📌 使用者登入
-
-```
-POST /api/app/users/login
-```
-
-* 請求：`{ "name": "使用者名稱" }`
-* 回應：`userId` / 找不到使用者錯誤
-
-### 📌 種植物
-
-```
-POST /api/app/plants/action
-```
-
-* 請求：
-
-```json
-{
-  "userId": 1,
-  "type": "bud",
-  "nickname": "小仙人掌",     // 可選
-  "pot": "default"           // 可選，預設為 "default"
-}
-```
-
-* 回應："植物已成功種下！"
-
-### 📌 顯示植物 ASCII 圖（含盆栽）
-
-```
-GET /api/app/plant-image/{plantId}
-```
-
-* 回傳：對應植物種類與成長階段的 ASCII 圖
-
----
-
 ## 🧪 測試方式（開發階段）
 
 使用 [httpie](https://httpie.io/) 測試 API 範例如下：
 
 ### 建立 使用者：
-
 ```bash
 http POST http://localhost:8080/api/app/register userName="測試用戶"
 回傳格式：
+{
+    "message": "註冊成功",
+    "userId": 1,
+}
+
+### 登入取得 用戶ID：
+```bash
+http POST http://localhost:8080/api/app/login userName="測試用戶" latitude:=23.6813 longitude:=120.5528
+```
 {
     "city": "Douliu",
     "message": "登入成功",
@@ -81,18 +41,7 @@ http POST http://localhost:8080/api/app/register userName="測試用戶"
     "weather": "Clouds"
 }
 
-### 登入取得 用戶ID：
-
-```bash
-http POST http://localhost:8080/api/app/login userName="測試用戶" latitude:=23.6813 longitude:=120.5528
-```
-{
-    "message": "登入成功",
-    "userId": 1
-}
-
 ### 種植物：
-
 ```bash
 http POST http://localhost:8080/api/app/1/plant plantType="weed"
 ```
@@ -122,7 +71,7 @@ http POST http://localhost:8080/api/app/1/1/fertilize
 }
 
 ### 植物重新命名
-'```bash
+```bash
 http POST http://localhost:8080/api/app/1/1/rename newName="小仙人掌"
 ```
 回傳結果：
@@ -131,9 +80,7 @@ http POST http://localhost:8080/api/app/1/1/rename newName="小仙人掌"
 }
 
 
-
-### 顯示使用者所有的植物清單：
-
+### 顯示使用者所有的植物清單
 ```bash
 http GET http://localhost:8080/api/app/1/plants
 ```
@@ -151,8 +98,38 @@ http GET http://localhost:8080/api/app/1/plants
     }
 ]
 
----
+### 加入好友
+```bash
+http POST http://localhost:8080/api/app/1/add-friend friendName="測試石頭"
+```
+回傳結果:
+成功加入好友：測試石頭
 
+### 顯示好友清單
+```bash
+http GET http://localhost:8080/api/app/1/friends
+```
+回傳結果:
+[
+    {
+        "friendName": "測試石頭",
+        "id": 2
+    },
+    {
+        "friendName": "測試雜草",
+        "id": 3
+    }
+]
+
+### 好友互動
+```bash
+http POST http://localhost:8080/api/app/2/friend-action/1
+```
+{
+    "message": "好友互動成功",
+    "plantId": 1
+}
+---
 ## 🚀 部署狀態
 
 * Azure Container App：部署成功 ✅

@@ -2,6 +2,7 @@ package com.cyberbotanic.model;
 
 import java.util.List;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity 
 @Table(name = "users")
@@ -17,6 +18,15 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Plant> plants;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+        name = "user_friends",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    private List<User> friends;
 
     public User() {}
 
@@ -68,4 +78,19 @@ public class User {
     public double getWeatherFactor() {return weatherFactor;}
     public void setWeatherFactor(double weatherFactor) {this.weatherFactor = weatherFactor;}
     
+    public List<User> getFriends() {return friends;}
+    public void addFriend(User friend) {
+        if (!friends.contains(friend)) {
+            friends.add(friend);
+            friend.getFriends().add(this); // 雙向綁定
+        }
+    }
+    public void removeFriend(User friend) {
+        if (friends.contains(friend)) {
+            friends.remove(friend);
+            friend.getFriends().remove(this); // 雙向解除
+        }
+    }
+
+
 }

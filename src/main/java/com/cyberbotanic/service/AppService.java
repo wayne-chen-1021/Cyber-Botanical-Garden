@@ -95,6 +95,9 @@ public class AppService {
         if (plant.getGrowthStage() == -1) {
             return Map.of("plantId", plantId, "message", "這個植物已經死亡，無法澆水");
         }
+        if (plant.getWaterLevel() >= 70) {
+            return Map.of("plantId", plantId, "message", "這個植物水分充足");
+        }
         plant.setWaterLevel(plant.getWaterLevel() + 50);
         plant.isGrown(); // 檢查植物是否成長
         plantRepository.save(plant);
@@ -114,6 +117,9 @@ public class AppService {
         // 檢查植物是否已死亡
         if (plant.getGrowthStage() == -1) {
             return Map.of("plantId", plantId, "message", "這個植物已經死亡，無法施肥");
+        }
+        if (plant.getNutrientLevel() >= 70) {
+            return Map.of("plantId", plantId, "message", "這個植物養分充足");
         }
         plant.setNutrientLevel(plant.getNutrientLevel() + 50);
         plant.isGrown(); // 檢查植物是否成長
@@ -143,13 +149,14 @@ public class AppService {
 
         Plant plant = plantOpt.get();
         if (plant.getUser().getId().equals(userId)) {
-            return Map.of("plantId", plantId, "message", "不能對我的植物好友互動");
+            plant.setPot("Original");
+            plantRepository.save(plant);
+            return Map.of("plantId", plantId, "message", "互動成功");
+        } else {
+            plant.setPot("Change");
+            plantRepository.save(plant);
+            return Map.of("plantId", plantId, "message", "好友互動成功");
         }
-        plant.setPot("change");
-
-        plantRepository.save(plant);
-
-        return Map.of("plantId", plantId, "message", "好友互動成功");
     }
     /* 重新命名 */
     public String reNamePlant(Long userId, Long plantId, String newName) {

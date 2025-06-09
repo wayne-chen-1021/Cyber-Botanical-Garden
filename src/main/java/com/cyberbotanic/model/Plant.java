@@ -35,8 +35,8 @@ public abstract class Plant {
         this.type = type;
         this.name = name;
         this.pot = "Original"; // Default pot type
-        this.waterLevel = 50; // Default water level
-        this.nutrientLevel = 50; // Default nutrient level
+        this.waterLevel = 70; // Default water level
+        this.nutrientLevel = 70; // Default nutrient level
         this.growthStage = 0; // Initial growth stage
         this.healthStatus = 100; // Initial health status
     }

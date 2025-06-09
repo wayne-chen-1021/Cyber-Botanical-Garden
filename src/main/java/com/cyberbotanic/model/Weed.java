@@ -20,8 +20,8 @@ public class Weed extends Plant {
         }
         if (this.waterLevel == 100 && this.nutrientLevel == 100 && this.growthStage < 5) {
             this.setGrowthStage(getGrowthStage() + 1);
-            this.setWaterLevel(50);
-            this.setNutrientLevel(50);
+            this.setWaterLevel(70);
+            this.setNutrientLevel(70);
         }
     }
 

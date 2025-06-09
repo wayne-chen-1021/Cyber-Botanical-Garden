@@ -1,7 +1,6 @@
 package com.cyberbotanic.controller;
 
 import com.cyberbotanic.model.Plant;
-import com.cyberbotanic.model.User;
 import com.cyberbotanic.service.*;
 
 import org.springframework.web.bind.annotation.RestController;

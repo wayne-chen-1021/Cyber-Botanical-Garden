@@ -45,7 +45,7 @@ public class InfoUpdateService {
             int updatedWater = Math.round(plant.getWaterLevel() + (float)owner.getWeatherFactor());
             plant.setWaterLevel(updatedWater);
 
-            int updateNutrient = -10;
+            int updateNutrient = -6;
             plant.setNutrientLevel(plant.getNutrientLevel() + updateNutrient);
             
             plantRepository.save(plant);

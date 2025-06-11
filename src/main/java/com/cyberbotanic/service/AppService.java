@@ -5,6 +5,7 @@ import com.cyberbotanic.model.*;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -213,6 +214,52 @@ public class AppService {
         userRepository.save(user);
 
         return "成功加入好友：" + friend.getUserName();
+    }
+    /* 刪除好友 */
+    public String deleteFriend(Long userId, String friendName) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<User> friendOpt = userRepository.findByUserName(friendName);
+
+        if (userOpt.isEmpty() || friendOpt.isEmpty()) {
+            return "使用者不存在";
+        }
+
+        User user = userOpt.get();
+        User friend = friendOpt.get();
+
+        if (!user.getFriends().contains(friend)) {
+            return "該使用者不是你的好友";
+        }
+
+        user.removeFriend(friend);
+        userRepository.save(user); // 更新資料庫關聯
+
+        return "已刪除好友：" + friend.getUserName();
+    }
+
+    /* 根據城市尋找使用者 */
+    public List<Map<String, Object>> searchUsers(Long userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return List.of(); // 或丟例外
+        }
+
+        User user = userOpt.get();
+        String city = user.getCity();
+
+        if (city == null || city.isBlank()) {
+            return List.of(); // 沒有 city 無法搜尋
+        }
+
+        return userRepository.findByCity(city).stream()
+                .filter(u -> !u.getId().equals(user.getId()))
+                .map(u -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", u.getId());
+                    map.put("userName", u.getUserName());
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 
 }

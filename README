@@ -120,10 +120,28 @@ http GET http://localhost:8080/api/app/1/friends
         "id": 3
     }
 ]
+### 刪除好友
+```bash
+http POST http://localhost:8080/api/app/1/delete-friend friendName="測試雜草"
+```
+回傳結果：
+已刪除好友：測試雜草 / 該使用者不是你的好友
 
+### 根據使用者所在城市搜尋其他使用者
+```bash
+http GET http://localhost:8080/api/app/1/search-users
+```
+回傳結果：
+[
+    {
+        "id": 3,
+        "userName": "測試雜草"
+    }
+]
 ### 好友互動
 ```bash
 http POST http://localhost:8080/api/app/2/friend-action/1
+回傳結果：
 ```
 {
     "message": "好友互動成功",

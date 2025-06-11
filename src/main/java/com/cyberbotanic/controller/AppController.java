@@ -5,6 +5,7 @@ import com.cyberbotanic.service.*;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -90,6 +91,24 @@ public class AppController {
 
         String friendName = request.get("friendName");
         String result = appService.addFriend(userId, friendName);
+        return ResponseEntity.ok(result);
+    }
+    /* 根據位置搜尋其他使用者 */
+    @GetMapping("/{userId}/search-users")
+    public ResponseEntity<List<Map<String, Object>>> searchUsers(
+            @PathVariable Long userId) {
+
+        List<Map<String, Object>> result = appService.searchUsers(userId);
+        return ResponseEntity.ok(result);
+    }
+    /* 刪除好友 */
+    @PostMapping("/{userId}/delete-friend")
+    public ResponseEntity<String> deleteFriend(
+            @PathVariable Long userId,
+            @RequestBody Map<String, String> request) {
+
+        String friendName = request.get("friendName");
+        String result = appService.deleteFriend(userId, friendName);
         return ResponseEntity.ok(result);
     }
     /* 換盆（目前實作為好友互動） */

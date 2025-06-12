@@ -39,7 +39,10 @@ public class InfoUpdateService {
             if (plant.getWaterLevel() <= 0 || plant.getNutrientLevel() <= 0) {
                 plant.setHealthStatus(plant.getHealthStatus() - 10);
                 plant.isDead();
-                plantRepository.save(plant);
+            }
+            if (plant.getWaterLevel() >= 50 && plant.getNutrientLevel() >= 50) {
+                plant.setHealthStatus(plant.getHealthStatus() + 10);
+                plant.isDead();
             }
 
             int updatedWater = Math.round(plant.getWaterLevel() + (float)owner.getWeatherFactor());
